@@ -2,12 +2,13 @@ import React, { useState } from "react";
 import { Card, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, IconButton } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import DetailsIcon from "@mui/icons-material/Details";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useEmployeesContext } from "./EmployeesContext";
 import axios from "axios";
 import { Employee } from "../../types/Employee";
 import EmployeeDetailsDrawer from "./EmployeeDetailsDrawer";
 import EmployeeEditDrawer from "./EmployeeEditDrawer";
+import DeleteConfirmationDialog from "./DeleteConfirmationDialog";
 
 const EmployeesTable = () => {
   const { employees, fetchEmployees } = useEmployeesContext();
@@ -15,6 +16,8 @@ const EmployeesTable = () => {
   const [isDetailDrawerOpen, setIsDetailDrawerOpen] = useState(false);
   const [editedEmployee, setEditedEmployee] = useState<Employee | null>(null);
   const [isEditDrawerOpen, setIsEditDrawerOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [employeeToDelete, setEmployeeToDelete] = useState<Employee | null>(null);
 
   const deleteEmployee = (id: number) => {
     axios.delete(`/api/employees/${id}`).then(() => {
@@ -40,6 +43,23 @@ const EmployeesTable = () => {
   const closeEditDrawer = () => {
     setEditedEmployee(null);
     setIsEditDrawerOpen(false);
+  };
+
+  const openDeleteDialog = (employee: Employee) => {
+    setEmployeeToDelete(employee);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const closeDeleteDialog = () => {
+    setEmployeeToDelete(null);
+    setIsDeleteDialogOpen(false);
+  };
+
+  const confirmDelete = () => {
+    if (employeeToDelete) {
+      deleteEmployee(employeeToDelete.id);
+      closeDeleteDialog();
+    }
   };
 
   const handleEditSave = (updatedEmployee: Employee) => {
@@ -90,7 +110,7 @@ const EmployeesTable = () => {
                         openDetailDrawer(employee);
                       }}
                     >
-                      <DetailsIcon />
+                      <VisibilityIcon />
                     </IconButton>
                     <IconButton
                       aria-label="edit"
@@ -101,13 +121,7 @@ const EmployeesTable = () => {
                     >
                       <EditIcon />
                     </IconButton>
-                    <IconButton
-                      aria-label="delete"
-                      size="small"
-                      onClick={() => {
-                        deleteEmployee(employee.id);
-                      }}
-                    >
+                    <IconButton aria-label="delete" size="small" onClick={() => openDeleteDialog(employee)}>
                       <DeleteIcon />
                     </IconButton>
                   </TableCell>
@@ -128,6 +142,7 @@ const EmployeesTable = () => {
           onSave={handleEditSave}
         />
       )}
+      <DeleteConfirmationDialog isOpen={isDeleteDialogOpen} onClose={closeDeleteDialog} onConfirm={confirmDelete} />
     </>
   );
 };
