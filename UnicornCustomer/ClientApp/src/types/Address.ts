@@ -1,6 +1,6 @@
 export interface Address {
-  Street: string;
-  Number: string;
-  City: string;
-  Zip: string;
+  street: string;
+  number: string;
+  city: string;
+  zip: string;
 }

@@ -1,11 +1,12 @@
 import { Address } from "./Address";
 
 export interface Employee {
-  Id: number;
-  Name: string;
-  First: string;
-  Lastname: string;
-  Birthdate: Date;
-  Phone: string;
-  Address: Address;
+  id: number;
+  name: string;
+  first: string;
+  lastname: string;
+  // birthdate: Date;
+  birthdate: string;
+  phone: string;
+  address: Address;
 }
