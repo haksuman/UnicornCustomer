@@ -7,11 +7,14 @@ import { useEmployeesContext } from "./EmployeesContext";
 import axios from "axios";
 import { Employee } from "../../types/Employee";
 import EmployeeDetailsDrawer from "./EmployeeDetailsDrawer";
+import EmployeeEditDrawer from "./EmployeeEditDrawer";
 
 const EmployeesTable = () => {
   const { employees, fetchEmployees } = useEmployeesContext();
   const [detailEmployee, setDetailEmployee] = useState<Employee | null>(null);
   const [isDetailDrawerOpen, setIsDetailDrawerOpen] = useState(false);
+  const [editedEmployee, setEditedEmployee] = useState<Employee | null>(null);
+  const [isEditDrawerOpen, setIsEditDrawerOpen] = useState(false);
 
   const deleteEmployee = (id: number) => {
     axios.delete(`/api/employees/${id}`).then(() => {
@@ -27,6 +30,23 @@ const EmployeesTable = () => {
   const closeDetailDrawer = () => {
     setDetailEmployee(null);
     setIsDetailDrawerOpen(false);
+  };
+
+  const openEditDrawer = (employee: Employee) => {
+    setEditedEmployee(employee);
+    setIsEditDrawerOpen(true);
+  };
+
+  const closeEditDrawer = () => {
+    setEditedEmployee(null);
+    setIsEditDrawerOpen(false);
+  };
+
+  const handleEditSave = (updatedEmployee: Employee) => {
+    axios.put(`/api/employees/${updatedEmployee.id}`, updatedEmployee).then(() => {
+      fetchEmployees();
+    });
+    closeEditDrawer();
   };
 
   return (
@@ -72,7 +92,13 @@ const EmployeesTable = () => {
                     >
                       <DetailsIcon />
                     </IconButton>
-                    <IconButton aria-label="edit" size="small">
+                    <IconButton
+                      aria-label="edit"
+                      size="small"
+                      onClick={() => {
+                        openEditDrawer(employee);
+                      }}
+                    >
                       <EditIcon />
                     </IconButton>
                     <IconButton
@@ -93,6 +119,14 @@ const EmployeesTable = () => {
       </Card>
       {detailEmployee !== null && (
         <EmployeeDetailsDrawer isOpen={isDetailDrawerOpen} onClose={closeDetailDrawer} employee={detailEmployee} />
+      )}
+      {editedEmployee !== null && (
+        <EmployeeEditDrawer
+          isOpen={isEditDrawerOpen}
+          onClose={closeEditDrawer}
+          employee={editedEmployee}
+          onSave={handleEditSave}
+        />
       )}
     </>
   );
