@@ -3,8 +3,8 @@ import { Card, CardContent, CardHeader } from "@mui/material/";
 
 const PageTest = () => {
   return (
-    <Card variant="outlined" className="bg-red">
-      <CardHeader title="Welcome to the administration" />
+    <Card variant="outlined">
+      <CardHeader title="Welcome to the administration" className="bg-red-500" />
       <CardContent>Foo</CardContent>
     </Card>
   );
