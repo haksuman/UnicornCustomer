@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Card,
   Table,
@@ -24,7 +24,7 @@ const EmployeesTable = () => {
   const { employees, fetchEmployees } = useEmployeesContext();
   const [detailEmployee, setDetailEmployee] = useState<Employee | null>(null);
   const [isDetailDrawerOpen, setIsDetailDrawerOpen] = useState(false);
-  const [editedEmployee, setEditedEmployee] = useState<Employee | null>(null);
+  const [editedEmployee, setEditedEmployee] = useState<Employee | undefined>(undefined);
   const [isEditDrawerOpen, setIsEditDrawerOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [employeeToDelete, setEmployeeToDelete] = useState<Employee | null>(null);
@@ -45,14 +45,17 @@ const EmployeesTable = () => {
     setIsDetailDrawerOpen(false);
   };
 
-  const openEditDrawer = (employee?: Employee) => {
-    setEditedEmployee(employee || null);
-    console.log("openEditDrawer", employee);
+  const openEditDrawer = (employee: Employee) => {
+    if (!employee) {
+      setEditedEmployee(undefined);
+    } else {
+      setEditedEmployee(employee);
+    }
     setIsEditDrawerOpen(true);
   };
 
   const closeEditDrawer = () => {
-    setEditedEmployee(null);
+    setEditedEmployee(undefined);
     setIsEditDrawerOpen(false);
   };
 
@@ -95,7 +98,7 @@ const EmployeesTable = () => {
             variant="outlined"
             color="secondary"
             sx={{ borderRadius: "20px", width: "100px" }}
-            onClick={() => openEditDrawer()}
+            onClick={() => openEditDrawer({} as Employee)}
           >
             Add
           </Button>
@@ -104,9 +107,10 @@ const EmployeesTable = () => {
           <Table className="min-w-sm" stickyHeader>
             <TableHead className=" border-solid border-1" style={{ backgroundColor: "#F5F5F5" }}>
               <TableRow>
-                <TableCell>Name</TableCell>
-                <TableCell>Lastname</TableCell>
-                <TableCell>Birthdate</TableCell>
+                <TableCell>Username</TableCell>
+                <TableCell>First name</TableCell>
+                <TableCell>Last name</TableCell>
+                <TableCell>Birth date</TableCell>
                 <TableCell>Phone</TableCell>
                 <TableCell>City</TableCell>
                 <TableCell>Actions</TableCell>
@@ -114,7 +118,10 @@ const EmployeesTable = () => {
             </TableHead>
             <TableBody>
               {employees.map((employee) => (
-                <TableRow key={employee.id}>
+                <TableRow key={employee.id} hover>
+                  <TableCell component="th" scope="row">
+                    {employee.name}
+                  </TableCell>
                   <TableCell component="th" scope="row">
                     {employee.first}
                   </TableCell>
