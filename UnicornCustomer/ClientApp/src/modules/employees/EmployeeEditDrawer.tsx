@@ -1,5 +1,5 @@
-import React from "react";
-import { Drawer, Typography, TextField, Button, Grid } from "@mui/material";
+import React, { useEffect } from "react";
+import { Drawer, Typography, TextField, Button, Grid, Box, Divider } from "@mui/material";
 import { Employee } from "../../types/Employee";
 import * as yup from "yup";
 import { Controller, useForm } from "react-hook-form";
@@ -9,7 +9,7 @@ import { DesktopDatePicker } from "@mui/x-date-pickers";
 interface EmployeeEditDrawerProps {
   isOpen: boolean;
   onClose: () => void;
-  employee: Employee;
+  employee: Employee | null;
   onSave: (updatedEmployee: Employee) => void;
 }
 
@@ -52,6 +52,7 @@ const EmployeeEditDrawer: React.FC<EmployeeEditDrawerProps> = ({ isOpen, onClose
     setValue,
     watch,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<Employee>({
     mode: "onChange",
@@ -61,10 +62,14 @@ const EmployeeEditDrawer: React.FC<EmployeeEditDrawerProps> = ({ isOpen, onClose
 
   const form = watch();
 
-  const handleSave = () => {
-    onSave(editedEmployee);
+  const handleSave = (data: Employee) => {
+    onSave(data);
     onClose();
   };
+
+  useEffect(() => {
+    if (employee) reset(employee);
+  }, []);
 
   return (
     <Drawer
@@ -72,13 +77,14 @@ const EmployeeEditDrawer: React.FC<EmployeeEditDrawerProps> = ({ isOpen, onClose
       open={isOpen}
       onClose={onClose}
       sx={{
-        "& .MuiDrawer-paper": { width: isMobile ? "100%" : "800px" },
+        "& .MuiDrawer-paper": { width: isMobile ? "100%" : "800px", height: "100vh" },
       }}
     >
-      <div style={{ padding: "16px" }}>
-        <Grid container spacing={2}>
+      <div className="h-full flex flex-col justify-between">
+        <Grid container spacing={3} className="p-4">
           <Grid item xs={12}>
-            <Typography variant="h6">Edit Employee</Typography>
+            <Typography variant="h5">{editedEmployee ? "Edit Employee" : "Add Employee"}</Typography>
+            <Divider className="mt-2" />
           </Grid>
           <Grid item xs={12}>
             <Controller
@@ -136,7 +142,7 @@ const EmployeeEditDrawer: React.FC<EmployeeEditDrawerProps> = ({ isOpen, onClose
             <Controller
               name="birthdate"
               control={control}
-              defaultValue={""}
+              defaultValue={new Date().toISOString().split("T")[0]}
               render={({ field }) => (
                 <TextField
                   {...field}
@@ -177,7 +183,6 @@ const EmployeeEditDrawer: React.FC<EmployeeEditDrawerProps> = ({ isOpen, onClose
                   fullWidth
                   value={value}
                   onChange={onChange}
-                  // error={!!errors.address.city}
                   error={!!errors.address && !!errors.address.city}
                   helperText={errors.address && errors.address.city ? errors.address.city.message : null}
                 />
@@ -219,10 +224,24 @@ const EmployeeEditDrawer: React.FC<EmployeeEditDrawerProps> = ({ isOpen, onClose
             />
           </Grid>
         </Grid>
-
-        <Button onClick={handleSave} variant="contained" color="primary">
-          Save
-        </Button>
+        <Box
+          className="sticky bottom-0 left-0 right-0 p-4 flex justify-end gap-4"
+          style={{
+            backgroundColor: "#F5F5F5",
+          }}
+        >
+          <Button onClick={onClose} variant="outlined" color="secondary" sx={{ borderRadius: "20px", width: "100px" }}>
+            Cancel
+          </Button>
+          <Button
+            onClick={handleSubmit(handleSave)}
+            variant="contained"
+            color="primary"
+            sx={{ borderRadius: "20px", width: "100px" }}
+          >
+            Save
+          </Button>
+        </Box>
       </div>
     </Drawer>
   );
