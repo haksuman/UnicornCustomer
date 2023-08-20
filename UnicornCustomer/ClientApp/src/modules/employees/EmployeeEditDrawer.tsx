@@ -47,16 +47,15 @@ const EmployeeEditDrawer: React.FC<EmployeeEditDrawerProps> = ({ isOpen, onClose
   const [editedEmployee, setEditedEmployee] = React.useState(employee);
   const isMobile = window.innerWidth < 600;
 
-  // react hook form methods
   const {
     control,
     setValue,
     watch,
     handleSubmit,
     formState: { errors },
-  } = useForm({
+  } = useForm<Employee>({
     mode: "onChange",
-    resolver: yupResolver(schema),
+    // resolver: yupResolver(schema),
     defaultValues: {},
   });
 
@@ -92,8 +91,8 @@ const EmployeeEditDrawer: React.FC<EmployeeEditDrawerProps> = ({ isOpen, onClose
                   fullWidth
                   value={value}
                   onChange={onChange}
-                  // error={!!errors.name}
-                  // helperText={errors.name?.message}
+                  error={!!errors.name}
+                  helperText={errors.name ? errors.name.message : null}
                 />
               )}
             />
@@ -111,7 +110,7 @@ const EmployeeEditDrawer: React.FC<EmployeeEditDrawerProps> = ({ isOpen, onClose
                   value={value}
                   onChange={onChange}
                   error={!!errors.first}
-                  // helperText={errors.first?.message}
+                  helperText={errors.first ? errors.first.message : null}
                 />
               )}
             />
@@ -128,7 +127,7 @@ const EmployeeEditDrawer: React.FC<EmployeeEditDrawerProps> = ({ isOpen, onClose
                   value={value}
                   onChange={onChange}
                   error={!!errors.lastname}
-                  // helperText={errors.lastname?.message}
+                  helperText={errors.lastname ? errors.lastname.message : null}
                 />
               )}
             />
@@ -137,7 +136,7 @@ const EmployeeEditDrawer: React.FC<EmployeeEditDrawerProps> = ({ isOpen, onClose
             <Controller
               name="birthdate"
               control={control}
-              defaultValue={new Date()}
+              defaultValue={""}
               render={({ field }) => (
                 <TextField
                   {...field}
@@ -145,7 +144,7 @@ const EmployeeEditDrawer: React.FC<EmployeeEditDrawerProps> = ({ isOpen, onClose
                   label="Birthdate"
                   type="date"
                   error={!!errors.birthdate}
-                  // helperText={errors.birthdate?.message}
+                  helperText={errors.birthdate ? errors.birthdate.message : null}
                 />
               )}
             />
@@ -162,7 +161,7 @@ const EmployeeEditDrawer: React.FC<EmployeeEditDrawerProps> = ({ isOpen, onClose
                   value={value}
                   onChange={onChange}
                   error={!!errors.phone}
-                  // helperText={errors.phone?.message}
+                  helperText={errors.phone ? errors.phone.message : null}
                 />
               )}
             />
@@ -178,8 +177,9 @@ const EmployeeEditDrawer: React.FC<EmployeeEditDrawerProps> = ({ isOpen, onClose
                   fullWidth
                   value={value}
                   onChange={onChange}
-                  // error={!!errors.address?.city}
-                  // helperText={errors.address?.city?.message}
+                  // error={!!errors.address.city}
+                  error={!!errors.address && !!errors.address.city}
+                  helperText={errors.address && errors.address.city ? errors.address.city.message : null}
                 />
               )}
             />
@@ -195,8 +195,8 @@ const EmployeeEditDrawer: React.FC<EmployeeEditDrawerProps> = ({ isOpen, onClose
                   fullWidth
                   value={value}
                   onChange={onChange}
-                  // error={!!errors.address?.zip}
-                  // helperText={errors.address?.zip?.message}
+                  error={!!errors.address && !!errors.address.zip}
+                  helperText={errors.address && errors.address.zip ? errors.address.zip.message : null}
                 />
               )}
             />
@@ -212,8 +212,8 @@ const EmployeeEditDrawer: React.FC<EmployeeEditDrawerProps> = ({ isOpen, onClose
                   fullWidth
                   value={value}
                   onChange={onChange}
-                  // error={!!errors.address?.street}
-                  // helperText={errors.address?.street?.message}
+                  error={!!errors.address && !!errors.address.street}
+                  helperText={errors.address && errors.address.street ? errors.address.street.message : null}
                 />
               )}
             />
