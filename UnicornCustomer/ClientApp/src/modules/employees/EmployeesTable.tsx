@@ -1,5 +1,15 @@
 import React, { useState } from "react";
-import { Card, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, IconButton } from "@mui/material";
+import {
+  Card,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  IconButton,
+  Button,
+} from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -35,8 +45,9 @@ const EmployeesTable = () => {
     setIsDetailDrawerOpen(false);
   };
 
-  const openEditDrawer = (employee: Employee) => {
-    setEditedEmployee(employee);
+  const openEditDrawer = (employee?: Employee) => {
+    setEditedEmployee(employee || null);
+    console.log("openEditDrawer", employee);
     setIsEditDrawerOpen(true);
   };
 
@@ -63,15 +74,32 @@ const EmployeesTable = () => {
   };
 
   const handleEditSave = (updatedEmployee: Employee) => {
-    axios.put(`/api/employees/${updatedEmployee.id}`, updatedEmployee).then(() => {
-      fetchEmployees();
-    });
+    if (editedEmployee) {
+      axios.put(`/api/employees/${updatedEmployee.id}`, updatedEmployee).then(() => {
+        fetchEmployees();
+      });
+    } else {
+      axios.post(`/api/employees`, updatedEmployee).then(() => {
+        fetchEmployees();
+      });
+    }
     closeEditDrawer();
   };
 
   return (
     <>
       <Card variant="outlined" className="p-4">
+        <div className="flex justify-between items-center">
+          <h2 className="text-2xl">Employees</h2>
+          <Button
+            variant="outlined"
+            color="secondary"
+            sx={{ borderRadius: "20px", width: "100px" }}
+            onClick={() => openEditDrawer()}
+          >
+            Add
+          </Button>
+        </div>
         <TableContainer className="w-full">
           <Table className="min-w-sm" stickyHeader>
             <TableHead className=" border-solid border-1" style={{ backgroundColor: "#F5F5F5" }}>
@@ -134,14 +162,12 @@ const EmployeesTable = () => {
       {detailEmployee !== null && (
         <EmployeeDetailsDrawer isOpen={isDetailDrawerOpen} onClose={closeDetailDrawer} employee={detailEmployee} />
       )}
-      {editedEmployee !== null && (
-        <EmployeeEditDrawer
-          isOpen={isEditDrawerOpen}
-          onClose={closeEditDrawer}
-          employee={editedEmployee}
-          onSave={handleEditSave}
-        />
-      )}
+      <EmployeeEditDrawer
+        isOpen={isEditDrawerOpen}
+        onClose={closeEditDrawer}
+        employee={editedEmployee}
+        onSave={handleEditSave}
+      />
       <DeleteConfirmationDialog isOpen={isDeleteDialogOpen} onClose={closeDeleteDialog} onConfirm={confirmDelete} />
     </>
   );

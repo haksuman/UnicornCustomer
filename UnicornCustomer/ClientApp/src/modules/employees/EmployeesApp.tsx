@@ -1,7 +1,4 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { Card, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
-import { Employee } from "../../types/Employee";
+import React from "react";
 import { EmployeesProvider } from "./EmployeesContext";
 import EmployeesTable from "./EmployeesTable";
 
