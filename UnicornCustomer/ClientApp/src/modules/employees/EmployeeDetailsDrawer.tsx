@@ -18,7 +18,7 @@ const EmployeeDetailsDrawer: React.FC<EmployeeDetailsDrawerProps> = ({ isOpen, o
       open={isOpen}
       onClose={onClose}
       sx={{
-        "& .MuiDrawer-paper": { boxSizing: "border-box", width: isMobile ? "100%" : "800px", height: "100vh" },
+        "& .MuiDrawer-paper": { boxSizing: "border-box", width: isMobile ? "100%" : "600px", height: "100vh" },
       }}
     >
       <IconButton
@@ -37,21 +37,22 @@ const EmployeeDetailsDrawer: React.FC<EmployeeDetailsDrawerProps> = ({ isOpen, o
       </IconButton>
 
       <div className="w-full h-full flex flex-col justify-between ">
-        <Grid container spacing={3} className="p-16">
+        <Grid container spacing={3} className="p-8">
           <Grid item xs={12}>
             <Typography variant="h5">Employee Details</Typography>
             <Divider className="mt-2" />
           </Grid>
           <Grid item xs={12}>
             <Typography variant="body1">
-              <b>Name:</b> {employee.first} {employee.lastname}
+              <b>Username:</b> {employee.name}
             </Typography>
           </Grid>
           <Grid item xs={12}>
             <Typography variant="body1">
-              <b>Username:</b> {employee.name}
+              <b>Name:</b> {employee.first} {employee.lastname}
             </Typography>
           </Grid>
+
           <Grid item xs={12}>
             <Typography variant="body1">
               <b>Birthdate:</b> {new Date(employee.birthdate).toLocaleDateString()}
@@ -64,7 +65,7 @@ const EmployeeDetailsDrawer: React.FC<EmployeeDetailsDrawerProps> = ({ isOpen, o
           </Grid>
           <Grid item xs={12}>
             <Typography variant="body1">
-              <b>Address:</b>
+              <b>Address: </b>
               {employee.address.street} {employee.address.number}, {employee.address.zip} {employee.address.city}
             </Typography>
           </Grid>

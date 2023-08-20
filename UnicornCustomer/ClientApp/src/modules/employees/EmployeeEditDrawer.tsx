@@ -4,21 +4,22 @@ import { Employee } from "../../types/Employee";
 import * as yup from "yup";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { DesktopDatePicker } from "@mui/x-date-pickers";
 
 interface EmployeeEditDrawerProps {
   isOpen: boolean;
   onClose: () => void;
-  employee: Employee | null;
+  employee: Employee | undefined;
   onSave: (updatedEmployee: Employee) => void;
 }
 
 const schema = yup.object().shape({
-  name: yup.string(),
-  first: yup.string().required(),
-  lastname: yup.string().required(),
-  birthdate: yup.date(),
-  phone: yup.string(),
+  name: yup.string().required("Username is a required field."),
+  first: yup.string().required("First name is a required field."),
+  lastname: yup.string().required("Last name is a required field."),
+  birthdate: yup.string(),
+  phone:
+    yup.string().required("Phone number is a required field.") &&
+    yup.string().matches(/^\d+$/, "Phone number must be a number"),
   address: yup.object().shape({
     city: yup.string(),
     zip: yup.string(),
@@ -26,41 +27,20 @@ const schema = yup.object().shape({
     number: yup.string(),
   }),
 });
-
-// example employee:
-//  {
-//    "Address": {
-//      "City": "New York",
-//      "Zip": "10001",
-//      "Street": "Broadway",
-//      "Number": "123"
-//    },
-//    "Birthdate": "1985-05-15T00:00:00",
-//    "First": "John",
-//    "Id": 1,
-//    "Lastname": "Doe",
-//    "Name": "Smith",
-//    "Phone": "555-123-4567"
-//  },
-
 const EmployeeEditDrawer: React.FC<EmployeeEditDrawerProps> = ({ isOpen, onClose, employee, onSave }) => {
-  const [editedEmployee, setEditedEmployee] = React.useState(employee);
   const isMobile = window.innerWidth < 600;
 
   const {
     control,
-    setValue,
     watch,
     handleSubmit,
     reset,
     formState: { errors },
   } = useForm<Employee>({
-    mode: "onChange",
-    // resolver: yupResolver(schema),
-    defaultValues: {},
+    resolver: yupResolver(schema) as any,
   });
 
-  const form = watch();
+  // const form = watch();
 
   const handleSave = (data: Employee) => {
     onSave(data);
@@ -68,8 +48,10 @@ const EmployeeEditDrawer: React.FC<EmployeeEditDrawerProps> = ({ isOpen, onClose
   };
 
   useEffect(() => {
-    if (employee) reset(employee);
-  }, []);
+    if (employee) {
+      reset(employee);
+    }
+  }, [employee]);
 
   return (
     <Drawer
@@ -77,13 +59,13 @@ const EmployeeEditDrawer: React.FC<EmployeeEditDrawerProps> = ({ isOpen, onClose
       open={isOpen}
       onClose={onClose}
       sx={{
-        "& .MuiDrawer-paper": { width: isMobile ? "100%" : "800px", height: "100vh" },
+        "& .MuiDrawer-paper": { width: isMobile ? "100%" : "600px", height: "100vh" },
       }}
     >
       <div className="h-full flex flex-col justify-between">
-        <Grid container spacing={3} className="p-4">
+        <Grid container spacing={3} className="p-8">
           <Grid item xs={12}>
-            <Typography variant="h5">{editedEmployee ? "Edit Employee" : "Add Employee"}</Typography>
+            <Typography variant="h5">{employee ? "Edit Employee" : "Add Employee"}</Typography>
             <Divider className="mt-2" />
           </Grid>
           <Grid item xs={12}>
@@ -172,7 +154,7 @@ const EmployeeEditDrawer: React.FC<EmployeeEditDrawerProps> = ({ isOpen, onClose
               )}
             />
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={6}>
             <Controller
               name="address.city"
               control={control}
@@ -189,7 +171,7 @@ const EmployeeEditDrawer: React.FC<EmployeeEditDrawerProps> = ({ isOpen, onClose
               )}
             />
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={6}>
             <Controller
               name="address.zip"
               control={control}
@@ -206,19 +188,36 @@ const EmployeeEditDrawer: React.FC<EmployeeEditDrawerProps> = ({ isOpen, onClose
               )}
             />
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={6}>
             <Controller
               name="address.street"
               control={control}
               defaultValue=""
               render={({ field: { onChange, value } }) => (
                 <TextField
-                  label="Street"
+                  label="Street Name"
                   fullWidth
                   value={value}
                   onChange={onChange}
                   error={!!errors.address && !!errors.address.street}
                   helperText={errors.address && errors.address.street ? errors.address.street.message : null}
+                />
+              )}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <Controller
+              name="address.number"
+              control={control}
+              defaultValue=""
+              render={({ field: { onChange, value } }) => (
+                <TextField
+                  label="Street Number"
+                  fullWidth
+                  value={value}
+                  onChange={onChange}
+                  error={!!errors.address && !!errors.address.number}
+                  helperText={errors.address && errors.address.number ? errors.address.number.message : null}
                 />
               )}
             />

@@ -5,7 +5,6 @@ export interface Employee {
   name: string;
   first: string;
   lastname: string;
-  // birthdate: Date;
   birthdate: string;
   phone: string;
   address: Address;
